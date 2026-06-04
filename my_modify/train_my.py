@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import os
 import argparse
 
@@ -5,7 +12,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from my_modify.my_real_dataset import MyRealDataset
+from my_real_dataset import MyRealDataset
 from cotracker.datasets.utils import collate_fn_train
 from cotracker.models.core.cotracker.cotracker3_offline import CoTrackerThreeOffline
 from cotracker.models.core.cotracker.cotracker3_online import CoTrackerThreeOnline
