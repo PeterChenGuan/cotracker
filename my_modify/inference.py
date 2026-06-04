@@ -68,7 +68,7 @@ def preprocess(frames, crop_size=(384, 512)):
 
     video = np.stack(processed, axis=0)               # [T, H, W, 3]
     video = torch.from_numpy(video).permute(0, 3, 1, 2).float()  # [T, 3, H, W]
-    video = video / 255.0 - 0.5                       # 归一化
+    # Keep 0~255 values; CoTrackerThree normalizes internally.
     video = video.unsqueeze(0)                         # [1, T, 3, H, W]
     return video
 
@@ -92,11 +92,20 @@ def run_inference(model, video, query_points):
     video = video.to(device)
 
     with torch.no_grad():
-        pred_trajs, pred_vis, pred_conf = model(
+        output = model(
             video=video,
             queries=queries,
             iters=6,
         )
+        if len(output) == 4:
+            pred_trajs, pred_vis, pred_conf, _ = output
+        elif len(output) == 3:
+            pred_trajs, pred_vis, _ = output
+            pred_conf = None
+        else:
+            raise ValueError(f"Unexpected model output length: {len(output)}")
+        if pred_conf is not None:
+            pred_vis = pred_vis * pred_conf
 
     # pred_trajs: [1, T, N, 2]
     # pred_vis:   [1, T, N]
