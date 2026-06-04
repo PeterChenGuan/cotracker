@@ -13,12 +13,13 @@ from PIL import Image
 from cotracker.utils.visualizer import Visualizer, read_video_from_path
 from cotracker.predictor import CoTrackerPredictor
 
-DEFAULT_DEVICE = (
-    "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-)
+# DEFAULT_DEVICE = (
+#     "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+# )
 
 # if DEFAULT_DEVICE == "mps":
-#     os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+#     os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"python.exe -m pip install --upgrade pip
+DEFAULT_DEVICE = "cpu"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -38,7 +39,7 @@ if __name__ == "__main__":
         default=None,
         help="CoTracker model parameters",
     )
-    parser.add_argument("--grid_size", type=int, default=10, help="Regular grid size")
+    parser.add_argument("--grid_size", type=int, default=0, help="Regular grid size")
     parser.add_argument(
         "--grid_query_frame",
         type=int,
@@ -106,4 +107,5 @@ if __name__ == "__main__":
         pred_tracks,
         pred_visibility,
         query_frame=0 if args.backward_tracking else args.grid_query_frame,
+        filename='apple_11.mp4'
     )
